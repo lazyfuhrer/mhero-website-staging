@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Ebene_2" data-name="Ebene 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 268.8 235.09">
+  <defs>
+    <style>
+      .cls-1 {
+        stroke-miterlimit: 10;
+      }
+
+      .cls-1, .cls-2 {
+        fill: none;
+        stroke: #171e21;
+        stroke-width: 5px;
+      }
+
+      .cls-2 {
+        stroke-miterlimit: 15.6;
+      }
+    </style>
+  </defs>
+  <g id="icons">
+    <line class="cls-2" y1="232.59" x2="268.8" y2="232.59"/>
+    <g>
+      <g>
+        <line class="cls-1" x1="134" y1="1.69" x2="134" y2="185.69"/>
+        <polyline class="cls-1" points="110.7 1.69 134 27.29 157.4 1.69"/>
+        <polyline class="cls-1" points="110.7 27.29 134 52.99 157.4 27.29"/>
+        <polyline class="cls-1" points="110.7 185.69 134 159.99 157.4 185.69"/>
+        <polyline class="cls-1" points="110.7 159.99 134 134.29 157.4 159.99"/>
+      </g>
+      <g>
+        <line class="cls-1" x1="58.5" y1="44.29" x2="210.3" y2="148.29"/>
+        <polyline class="cls-1" points="45.3 63.49 79.6 58.79 71.6 25.09"/>
+        <polyline class="cls-1" points="66.5 78.09 100.8 73.29 92.8 39.59"/>
+        <polyline class="cls-1" points="197.1 167.59 189.1 133.79 223.5 129.09"/>
+        <polyline class="cls-1" points="175.9 152.99 167.9 119.29 202.3 114.59"/>
+      </g>
+      <g>
+        <line class="cls-1" x1="210.3" y1="44.29" x2="58.5" y2="148.29"/>
+        <polyline class="cls-1" points="223.5 63.49 189.1 58.79 197.1 25.09"/>
+        <polyline class="cls-1" points="202.3 78.09 167.9 73.29 175.9 39.59"/>
+        <polyline class="cls-1" points="71.6 167.59 79.6 133.79 45.3 129.09"/>
+        <polyline class="cls-1" points="92.8 152.99 100.8 119.29 66.5 114.59"/>
+      </g>
+    </g>
+  </g>
+</svg>
