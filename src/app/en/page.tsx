@@ -6,7 +6,7 @@ import { useState, useEffect, useRef } from "react";
 import { ChevronDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
-export default function Home() {
+export default function HomeEn() {
   const [selectedModel, setSelectedModel] = useState("Choose Model");
   const [showDropdown, setShowDropdown] = useState(false);
   const desktopDropdownRef = useRef<HTMLDivElement>(null);
