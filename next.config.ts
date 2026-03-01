@@ -5,16 +5,26 @@ const nextConfig: NextConfig = {
     qualities: [100, 75],
   },
 
+  async redirects() {
+    return [
+      {
+        source: "/",
+        destination: "/en",
+        permanent: true,
+      },
+    ];
+  },
+
   async rewrites() {
     return [
       {
-        source: "/home",
-        destination: "/static/index.html",
+        source: "/en/home",
+        destination: "/index.html",
       },
       {
-        source: "/home-ar",
-        destination: "/static/ar.html",
-      },
+        source: "/ar/home",
+        destination: "/ar.html",
+      }
     ];
   },
 };
