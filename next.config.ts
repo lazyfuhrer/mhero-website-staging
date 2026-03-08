@@ -17,6 +17,7 @@ const nextConfig: NextConfig = {
 
   async rewrites() {
     return [
+      // Home pages
       {
         source: "/en/home",
         destination: "/index.html",
@@ -24,7 +25,17 @@ const nextConfig: NextConfig = {
       {
         source: "/ar/home",
         destination: "/ar.html",
-      }
+      },
+
+      // Dynamic pages like /en/about, /en/contact, etc.
+      {
+        source: "/en/:page",
+        destination: "/en/:page.html",
+      },
+      {
+        source: "/ar/:page",
+        destination: "/ar/:page.html",
+      },
     ];
   },
 };
