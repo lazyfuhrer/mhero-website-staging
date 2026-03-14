@@ -44,6 +44,14 @@ const nextConfig: NextConfig = {
         source: "/ar/specifications",
         destination: "/ar/specifications.html",
       },
+      {
+        source: "/en/privacy-policy",
+        destination: "/en/privacy-policy.html",
+      },
+      {
+        source: "/ar/privacy-policy",
+        destination: "/ar/privacy-policy.html",
+      },
     ];
   },
 };
