@@ -60,6 +60,14 @@ const nextConfig: NextConfig = {
         source: "/ar/cookie-policy",
         destination: "/ar/cookie-policy.html",
       },
+      {
+        source: "/en/user-consent-policy",
+        destination: "/en/cookie-policy.html",
+      },
+      {
+        source: "/ar/user-consent-policy",
+        destination: "/ar/user-consent-policy.html",
+      },
     ];
   },
 };
