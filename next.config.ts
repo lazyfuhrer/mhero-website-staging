@@ -68,6 +68,22 @@ const nextConfig: NextConfig = {
         source: "/ar/user-consent-policy",
         destination: "/ar/user-consent-policy.html",
       },
+      {
+        source: "/en/test-drive",
+        destination: "/en/test-drive.html",
+      },
+      {
+        source: "/ar/test-drive",
+        destination: "/ar/test-drive.html",
+      },
+      {
+        source: "/en/service",
+        destination: "/en/service.html",
+      },
+      {
+        source: "/ar/service",
+        destination: "/ar/service.html",
+      },
     ];
   },
 };
