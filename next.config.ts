@@ -84,6 +84,14 @@ const nextConfig: NextConfig = {
         source: "/ar/service",
         destination: "/ar/service.html",
       },
+      {
+        source: "/en/contact-us",
+        destination: "/en/contact.html",
+      },
+      {
+        source: "/ar/contact-us",
+        destination: "/ar/contact.html",
+      }
     ];
   },
 };
