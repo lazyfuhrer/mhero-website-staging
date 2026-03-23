@@ -57,9 +57,51 @@ export async function POST(request: NextRequest) {
 
     const recaptchaSecret = process.env.RECAPTCHA_SECRET_KEY;
     const recaptchaToken = String(formData.get("g-recaptcha-response") ?? "");
+    // #region agent log
+    fetch("http://127.0.0.1:7307/ingest/4a970e26-d6d1-4b12-95b0-597a4f8c439c", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Debug-Session-Id": "80fc19",
+      },
+      body: JSON.stringify({
+        sessionId: "80fc19",
+        location: "test-drive/route.ts:recaptcha-state",
+        message: "recaptcha secret + token presence",
+        data: {
+          hypothesisId: "H1",
+          hasRecaptchaSecret: Boolean(recaptchaSecret),
+          recaptchaTokenLen: recaptchaToken.length,
+          recaptchaTokenIsEmpty: recaptchaToken.length === 0,
+        },
+        timestamp: Date.now(),
+        runId: "pre-recaptcha",
+      }),
+    }).catch(() => {});
+    // #endregion
     if (recaptchaSecret) {
       const ok = await verifyRecaptcha(recaptchaToken || null, recaptchaSecret);
       if (!ok) {
+        // #region agent log
+        fetch("http://127.0.0.1:7307/ingest/4a970e26-d6d1-4b12-95b0-597a4f8c439c", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Debug-Session-Id": "80fc19",
+          },
+          body: JSON.stringify({
+            sessionId: "80fc19",
+            location: "test-drive/route.ts:recaptcha-verify-failed",
+            message: "recaptcha verification failed",
+            data: {
+              hypothesisId: "H3",
+              recaptchaTokenLen: recaptchaToken.length,
+            },
+            timestamp: Date.now(),
+            runId: "verify-failed",
+          }),
+        }).catch(() => {});
+        // #endregion
         return legacyResponse(false, "reCAPTCHA verification failed. Please try again.");
       }
     }
