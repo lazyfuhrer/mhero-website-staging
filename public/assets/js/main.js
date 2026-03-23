@@ -107,22 +107,34 @@ $(document).ready(function (e) {
         }
 
         window.grecaptcha.ready(function () {
-          window.grecaptcha
-            .execute(siteKey, { action: "submit" })
-            .then(function (token) {
-              var input = form.find("input[name='g-recaptcha-response']");
-              if (!input.length) {
-                input = $("<input>")
-                  .attr("type", "hidden")
-                  .attr("name", "g-recaptcha-response")
-                  .appendTo(form);
-              }
-              input.val(token);
-              resolve();
-            })
-            .catch(function () {
-              resolve();
+          try {
+            var promise = window.grecaptcha.execute(siteKey, {
+              action: "submit",
             });
+            if (promise && typeof promise.then === "function") {
+              promise
+                .then(function (token) {
+                  var input = form.find(
+                    "input[name='g-recaptcha-response']"
+                  );
+                  if (!input.length) {
+                    input = $("<input>")
+                      .attr("type", "hidden")
+                      .attr("name", "g-recaptcha-response")
+                      .appendTo(form);
+                  }
+                  input.val(token);
+                  resolve();
+                })
+                .catch(function () {
+                  resolve();
+                });
+            } else {
+              resolve();
+            }
+          } catch (err) {
+            resolve();
+          }
         });
       } catch (e) {
         resolve();
