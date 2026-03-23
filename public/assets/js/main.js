@@ -87,11 +87,56 @@ $(document).ready(function (e) {
       form_group.addClass("focused");
     }
   });
+
+  // reCAPTCHA v3 integration:
+  // If the widget didn't create `g-recaptcha-response`, execute and inject it before submitting.
+  function ensureRecaptchaToken(form) {
+    return new Promise(function (resolve) {
+      try {
+        var existing = form.find("input[name='g-recaptcha-response']").val();
+        if (existing && existing.length > 0) return resolve();
+
+        var widget = form.find(".g-recaptcha").first();
+        var siteKey = widget.attr("data-sitekey");
+        if (
+          !siteKey ||
+          !window.grecaptcha ||
+          typeof window.grecaptcha.execute !== "function"
+        ) {
+          return resolve();
+        }
+
+        window.grecaptcha.ready(function () {
+          window.grecaptcha
+            .execute(siteKey, { action: "submit" })
+            .then(function (token) {
+              var input = form.find("input[name='g-recaptcha-response']");
+              if (!input.length) {
+                input = $("<input>")
+                  .attr("type", "hidden")
+                  .attr("name", "g-recaptcha-response")
+                  .appendTo(form);
+              }
+              input.val(token);
+              resolve();
+            })
+            .catch(function () {
+              resolve();
+            });
+        });
+      } catch (e) {
+        resolve();
+      }
+    });
+  }
+
   $("#contact_form").submit(function () {
     let form = $(this);
     if (form_validate(form)) {
-      mhero_form_submit(form, function () {
-        location.replace(_mhao.base_url + "contact-us/thankyou");
+      ensureRecaptchaToken(form).then(function () {
+        mhero_form_submit(form, function () {
+          location.replace(_mhao.base_url + "contact-us/thankyou");
+        });
       });
     }
     return false;
