@@ -9,10 +9,15 @@ import { google } from "googleapis";
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function legacyResponse(success: boolean, message: string) {
-  return NextResponse.json(
-    { result: success ? "success" : "error", message },
-    { status: 200 }
-  );
+  // `mhero_form_submit` expects `$.post` success payload to be a *string* and then runs `$.parseJSON`.
+  // Returning `NextResponse.json` can be parsed by jQuery automatically, which makes `$.parseJSON` crash with
+  // "[object Object]" not valid JSON. Using `text/plain` forces a string response.
+  return new NextResponse(JSON.stringify({ result: success ? "success" : "error", message }), {
+    status: 200,
+    headers: {
+      "Content-Type": "text/plain; charset=utf-8",
+    },
+  });
 }
 
 async function verifyRecaptcha(
@@ -130,7 +135,10 @@ export async function POST(request: NextRequest) {
           }),
         }).catch(() => {});
         // #endregion
-        return legacyResponse(false, "reCAPTCHA verification failed. Please try again.");
+        return legacyResponse(
+          false,
+          `reCAPTCHA verification failed. tokenLen=${recaptchaToken.length}, siteKeyMatch=${isUsingExpectedRecaptchaSiteKey}. Please try again.`
+        );
       }
     }
 
