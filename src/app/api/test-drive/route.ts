@@ -4,6 +4,11 @@ import { google } from "googleapis";
 /** Row order: Timestamp, Name, Surname, Location, City, Country, Email, Phone, Message, Locale */
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// DEBUG: hard-coded reCAPTCHA keys for isolating env/deployment issues.
+// NOTE: This is sensitive; revert to env vars after testing.
+const RECAPTCHA_SITE_KEY = "6LfLs5QsAAAAAITeiN_ihYBRNmRFAqOA9HyFV4k0";
+const RECAPTCHA_SECRET_KEY = "6LfLs5QsAAAAAMKjXH6DefGO7QJrgKA3iYHoDSTw";
+
 function legacyResponse(success: boolean, message: string) {
   // `mhero_form_submit` expects `$.post` success payload to be a *string* and then runs `$.parseJSON`.
   // Returning `NextResponse.json` can be parsed by jQuery automatically, which makes `$.parseJSON` crash with
@@ -60,11 +65,11 @@ export async function POST(request: NextRequest) {
       return legacyResponse(false, "Invalid email format.");
     }
 
-    const recaptchaSecret = process.env.RECAPTCHA_SECRET_KEY;
+    const recaptchaSecret = RECAPTCHA_SECRET_KEY;
     const recaptchaTokenRaw = formData.get("g-recaptcha-response");
     const hasRecaptchaTokenField = recaptchaTokenRaw !== null;
     const recaptchaToken = String(recaptchaTokenRaw ?? "");
-    const recaptchaSiteKeyExpected = process.env.RECAPTCHA_SITE_KEY ?? "";
+    const recaptchaSiteKeyExpected = RECAPTCHA_SITE_KEY;
     const recaptchaSiteKeyUsedRaw = String(formData.get("recaptcha_site_key_used") ?? "");
     const hasRecaptchaSiteKeyExpected = recaptchaSiteKeyExpected.length > 0;
     const isUsingExpectedRecaptchaSiteKey =
