@@ -7,9 +7,17 @@ const nextConfig: NextConfig = {
 
   async redirects() {
     return [
+      // ✅ Default landing
       {
         source: "/",
         destination: "/en/home",
+        permanent: true,
+      },
+
+      // 🔥 Enforce clean URLs (remove .html)
+      {
+        source: "/:lang/:page.html",
+        destination: "/:lang/:page",
         permanent: true,
       },
     ];
@@ -27,7 +35,7 @@ const nextConfig: NextConfig = {
         destination: "/ar.html",
       },
 
-      // ✅ Special aliases (BEFORE generic)
+      // ✅ Special aliases (MUST be before generic)
       {
         source: "/:lang/contact-us",
         destination: "/:lang/contact.html",
@@ -37,7 +45,7 @@ const nextConfig: NextConfig = {
         destination: "/:lang/user-consent-policy.html",
       },
 
-      // ✅ Generic mapping (clean URLs)
+      // ✅ Generic mapping (clean → .html internally)
       {
         source: "/:lang/:page",
         destination: "/:lang/:page.html",
