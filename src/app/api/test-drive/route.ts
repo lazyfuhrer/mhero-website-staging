@@ -56,7 +56,17 @@ export async function POST(request: NextRequest) {
     }
 
     const recaptchaSecret = process.env.RECAPTCHA_SECRET_KEY;
-    const recaptchaToken = String(formData.get("g-recaptcha-response") ?? "");
+    const recaptchaTokenRaw = formData.get("g-recaptcha-response");
+    const hasRecaptchaTokenField = recaptchaTokenRaw !== null;
+    const recaptchaToken = String(recaptchaTokenRaw ?? "");
+    const recaptchaSiteKeyExpected = process.env.RECAPTCHA_SITE_KEY ?? "";
+    const recaptchaSiteKeyUsedRaw = String(formData.get("recaptcha_site_key_used") ?? "");
+    const hasRecaptchaSiteKeyExpected = recaptchaSiteKeyExpected.length > 0;
+    const isUsingExpectedRecaptchaSiteKey =
+      hasRecaptchaSiteKeyExpected && recaptchaSiteKeyUsedRaw === recaptchaSiteKeyExpected;
+    const reqHost = request.headers.get("host") ?? "";
+    const origin = request.headers.get("origin") ?? "";
+    const referer = request.headers.get("referer") ?? "";
     // #region agent log
     fetch("http://127.0.0.1:7307/ingest/4a970e26-d6d1-4b12-95b0-597a4f8c439c", {
       method: "POST",
@@ -72,7 +82,14 @@ export async function POST(request: NextRequest) {
           hypothesisId: "H1",
           hasRecaptchaSecret: Boolean(recaptchaSecret),
           recaptchaTokenLen: recaptchaToken.length,
+          hasRecaptchaTokenField,
           recaptchaTokenIsEmpty: recaptchaToken.length === 0,
+          recaptchaSiteKeyExpectedLen: recaptchaSiteKeyExpected.length,
+          recaptchaSiteKeyUsedLen: recaptchaSiteKeyUsedRaw.length,
+          isUsingExpectedRecaptchaSiteKey,
+          reqHost,
+          origin,
+          referer,
         },
         timestamp: Date.now(),
         runId: "pre-recaptcha",
@@ -162,9 +179,52 @@ export async function POST(request: NextRequest) {
       requestBody: { values },
     });
 
+    // #region agent log
+    fetch("http://127.0.0.1:7307/ingest/4a970e26-d6d1-4b12-95b0-597a4f8c439c", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Debug-Session-Id": "80fc19",
+      },
+      body: JSON.stringify({
+        sessionId: "80fc19",
+        location: "test-drive/route.ts:append-ok",
+        message: "Google Sheets append succeeded",
+        data: {
+          hypothesisId: "H4",
+          hasSpreadsheetId: Boolean(spreadsheetId),
+          spreadsheetIdLen: spreadsheetId.length,
+          sheetName,
+        },
+        timestamp: Date.now(),
+        runId: "append-ok",
+      }),
+    }).catch(() => {});
+    // #endregion
+
     console.log("POST /api/test-drive - 200");
     return legacyResponse(true, "Thank you. Your test drive request has been received.");
   } catch (error) {
+    // #region agent log
+    fetch("http://127.0.0.1:7307/ingest/4a970e26-d6d1-4b12-95b0-597a4f8c439c", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Debug-Session-Id": "80fc19",
+      },
+      body: JSON.stringify({
+        sessionId: "80fc19",
+        location: "test-drive/route.ts:append-catch",
+        message: "Google Sheets append failed",
+        data: {
+          hypothesisId: "H4",
+          error: error instanceof Error ? error.message : String(error),
+        },
+        timestamp: Date.now(),
+        runId: "append-failed",
+      }),
+    }).catch(() => {});
+    // #endregion
     console.error("POST /api/test-drive - error", error);
     return legacyResponse(
       false,
