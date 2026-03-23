@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/",
-        destination: "/en",
+        destination: "/en/home",
         permanent: true,
       },
     ];
@@ -27,7 +27,7 @@ const nextConfig: NextConfig = {
         destination: "/ar.html",
       },
 
-      // ✅ Special cases (keep BEFORE generic)
+      // ✅ Special aliases (BEFORE generic)
       {
         source: "/:lang/contact-us",
         destination: "/:lang/contact.html",
@@ -37,7 +37,7 @@ const nextConfig: NextConfig = {
         destination: "/:lang/user-consent-policy.html",
       },
 
-      // ✅ Generic catch-all (MUST be last)
+      // ✅ Generic mapping (clean URLs)
       {
         source: "/:lang/:page",
         destination: "/:lang/:page.html",
