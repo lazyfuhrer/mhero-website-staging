@@ -17,7 +17,7 @@ const nextConfig: NextConfig = {
 
   async rewrites() {
     return [
-      // Home pages
+      // ✅ Home pages
       {
         source: "/en/home",
         destination: "/index.html",
@@ -27,71 +27,21 @@ const nextConfig: NextConfig = {
         destination: "/ar.html",
       },
 
-      // Dynamic pages like /en/about, /en/contact, etc.
+      // ✅ Special cases (keep BEFORE generic)
       {
-        source: "/en/:page",
-        destination: "/en/:page.html",
+        source: "/:lang/contact-us",
+        destination: "/:lang/contact.html",
       },
       {
-        source: "/ar/:page",
-        destination: "/ar/:page.html",
+        source: "/:lang/user-consent-policy",
+        destination: "/:lang/user-consent-policy.html",
       },
+
+      // ✅ Generic catch-all (MUST be last)
       {
-        source: "/en/specifications",
-        destination: "/en/specifications.html",
+        source: "/:lang/:page",
+        destination: "/:lang/:page.html",
       },
-      {
-        source: "/ar/specifications",
-        destination: "/ar/specifications.html",
-      },
-      {
-        source: "/en/privacy-policy",
-        destination: "/en/privacy-policy.html",
-      },
-      {
-        source: "/ar/privacy-policy",
-        destination: "/ar/privacy-policy.html",
-      },
-      {
-        source: "/en/cookie-policy",
-        destination: "/en/cookie-policy.html",
-      },
-      {
-        source: "/ar/cookie-policy",
-        destination: "/ar/cookie-policy.html",
-      },
-      {
-        source: "/en/user-consent-policy",
-        destination: "/en/cookie-policy.html",
-      },
-      {
-        source: "/ar/user-consent-policy",
-        destination: "/ar/user-consent-policy.html",
-      },
-      {
-        source: "/en/test-drive",
-        destination: "/en/test-drive.html",
-      },
-      {
-        source: "/ar/test-drive",
-        destination: "/ar/test-drive.html",
-      },
-      {
-        source: "/en/service",
-        destination: "/en/service.html",
-      },
-      {
-        source: "/ar/service",
-        destination: "/ar/service.html",
-      },
-      {
-        source: "/en/contact-us",
-        destination: "/en/contact.html",
-      },
-      {
-        source: "/ar/contact-us",
-        destination: "/ar/contact.html",
-      }
     ];
   },
 };
