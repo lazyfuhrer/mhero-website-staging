@@ -76,7 +76,8 @@ export async function POST(request: NextRequest) {
       return legacyResponse(false, "Invalid email format.");
     }
 
-    const recaptchaSecret = RECAPTCHA_SECRET_KEY;
+    // reCAPTCHA temporarily disabled for staging form submissions
+    const recaptchaSecret = "";
     const recaptchaTokenRaw = formData.get("g-recaptcha-response");
     const hasRecaptchaTokenField = recaptchaTokenRaw !== null;
     const recaptchaToken = String(recaptchaTokenRaw ?? "");
