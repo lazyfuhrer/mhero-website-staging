@@ -54,6 +54,14 @@
                 body:hover .cursor {
                     opacity: 1;
                 }
+
+                /* Force Western numerals inside RTL Arabic text */
+                .latin-numerals {
+                    direction: ltr;
+                    unicode-bidi: isolate;
+                    font-variant-numeric: lining-nums;
+                    font-family: Figtree, Arial, "Helvetica Neue", Helvetica, sans-serif !important;
+                }
             </style>
         </div>
     </div>
@@ -370,11 +378,17 @@
                     <div class="specs-grid-item">
                         <p class="p-16">* ضمان السيارة</p>
                         <div class="warranty-details-wrap">
-                            <div class="p-32">6 سنوات / 200,000 كم</div>
+                            <div class="p-32"><span class="latin-numerals" dir="ltr" lang="en"
+                                    style="font-family:Figtree, Arial, 'Helvetica Neue', Helvetica, sans-serif !important; unicode-bidi:bidi-override; direction:ltr;">6</span>
+                                سنوات / <span class="latin-numerals" dir="ltr" lang="en"
+                                    style="font-family:Figtree, Arial, 'Helvetica Neue', Helvetica, sans-serif !important; unicode-bidi:bidi-override; direction:ltr;">200,000</span>
+                                كم</div>
                         </div>
                         <p class="p-16">* ضمان البطارية</p>
                         <div class="warranty-details-wrap">
-                            <div class="p-32">8 سنوات / مسافة غير محددة</div>
+                            <div class="p-32"><span class="latin-numerals" dir="ltr" lang="en"
+                                    style="font-family:Figtree, Arial, 'Helvetica Neue', Helvetica, sans-serif !important; unicode-bidi:bidi-override; direction:ltr;">8</span>
+                                سنوات / مسافة غير محددة</div>
                         </div> <small>*تطبق الشروط والأحكام</small>
                     </div>
                 </div>
