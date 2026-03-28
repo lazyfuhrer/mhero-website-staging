@@ -16,8 +16,8 @@ const nextConfig: NextConfig = {
 
       // 🔥 Enforce clean URLs (remove .html)
       {
-        source: "/:lang/:page.html",
-        destination: "/:lang/:page",
+        source: "/:lang/:path*.html",
+        destination: "/:lang/:path*",
         permanent: true,
       },
     ];
@@ -44,11 +44,16 @@ const nextConfig: NextConfig = {
         source: "/:lang/user-consent-policy",
         destination: "/:lang/user-consent-policy.html",
       },
-
-      // ✅ Generic mapping (clean → .html internally)
+      // Thank-you after contact form (URL is /{lang}/contact-us/thankyou; file is /{lang}/thankyou.html)
       {
-        source: "/:lang/:page",
-        destination: "/:lang/:page.html",
+        source: "/:lang/contact-us/thankyou",
+        destination: "/:lang/thankyou.html",
+      },
+
+      // 🔥 Nested routes (any depth)
+      {
+        source: "/:lang/:path*",
+        destination: "/:lang/:path*.html",
       },
     ];
   },

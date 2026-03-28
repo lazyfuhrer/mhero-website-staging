@@ -4,11 +4,6 @@ import { google } from "googleapis";
 /** Row order: Timestamp, Name, Surname, Location, City, Country, Email, Phone, Message, Locale */
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-// DEBUG: hard-coded reCAPTCHA keys for isolating env/deployment issues.
-// NOTE: This is sensitive; revert to env vars after testing.
-const RECAPTCHA_SITE_KEY = "6LfLs5QsAAAAAITeiN_ihYBRNmRFAqOA9HyFV4k0";
-const RECAPTCHA_SECRET_KEY = "6LfLs5QsAAAAAMKjXH6DefGO7QJrgKA3iYHoDSTw";
-
 function legacyResponse(success: boolean, message: string) {
   // `mhero_form_submit` expects `$.post` success payload to be a *string* and then runs `$.parseJSON`.
   // Returning `NextResponse.json` can be parsed by jQuery automatically, which makes `$.parseJSON` crash with
@@ -65,75 +60,13 @@ export async function POST(request: NextRequest) {
       return legacyResponse(false, "Invalid email format.");
     }
 
-    // reCAPTCHA temporarily disabled for staging form submissions
+    // reCAPTCHA disabled until client + keys are aligned; use process.env.RECAPTCHA_SECRET_KEY here to re-enable.
     const recaptchaSecret = "";
-    const recaptchaTokenRaw = formData.get("g-recaptcha-response");
-    const hasRecaptchaTokenField = recaptchaTokenRaw !== null;
-    const recaptchaToken = String(recaptchaTokenRaw ?? "");
-    const recaptchaSiteKeyExpected = RECAPTCHA_SITE_KEY;
-    const recaptchaSiteKeyUsedRaw = String(formData.get("recaptcha_site_key_used") ?? "");
-    const hasRecaptchaSiteKeyExpected = recaptchaSiteKeyExpected.length > 0;
-    const isUsingExpectedRecaptchaSiteKey =
-      hasRecaptchaSiteKeyExpected && recaptchaSiteKeyUsedRaw === recaptchaSiteKeyExpected;
-    const reqHost = request.headers.get("host") ?? "";
-    const origin = request.headers.get("origin") ?? "";
-    const referer = request.headers.get("referer") ?? "";
-    // #region agent log
-    fetch("http://127.0.0.1:7307/ingest/4a970e26-d6d1-4b12-95b0-597a4f8c439c", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Debug-Session-Id": "80fc19",
-      },
-      body: JSON.stringify({
-        sessionId: "80fc19",
-        location: "test-drive/route.ts:recaptcha-state",
-        message: "recaptcha secret + token presence",
-        data: {
-          hypothesisId: "H1",
-          hasRecaptchaSecret: Boolean(recaptchaSecret),
-          recaptchaTokenLen: recaptchaToken.length,
-          hasRecaptchaTokenField,
-          recaptchaTokenIsEmpty: recaptchaToken.length === 0,
-          recaptchaSiteKeyExpectedLen: recaptchaSiteKeyExpected.length,
-          recaptchaSiteKeyUsedLen: recaptchaSiteKeyUsedRaw.length,
-          isUsingExpectedRecaptchaSiteKey,
-          reqHost,
-          origin,
-          referer,
-        },
-        timestamp: Date.now(),
-        runId: "pre-recaptcha",
-      }),
-    }).catch(() => {});
-    // #endregion
+    const recaptchaToken = String(formData.get("g-recaptcha-response") ?? "");
     if (recaptchaSecret) {
       const ok = await verifyRecaptcha(recaptchaToken || null, recaptchaSecret);
       if (!ok) {
-        // #region agent log
-        fetch("http://127.0.0.1:7307/ingest/4a970e26-d6d1-4b12-95b0-597a4f8c439c", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-Debug-Session-Id": "80fc19",
-          },
-          body: JSON.stringify({
-            sessionId: "80fc19",
-            location: "test-drive/route.ts:recaptcha-verify-failed",
-            message: "recaptcha verification failed",
-            data: {
-              hypothesisId: "H3",
-              recaptchaTokenLen: recaptchaToken.length,
-            },
-            timestamp: Date.now(),
-            runId: "verify-failed",
-          }),
-        }).catch(() => {});
-        // #endregion
-        return legacyResponse(
-          false,
-          `reCAPTCHA verification failed. tokenLen=${recaptchaToken.length}, siteKeyMatch=${isUsingExpectedRecaptchaSiteKey}. Please try again.`
-        );
+        return legacyResponse(false, "reCAPTCHA verification failed. Please try again.");
       }
     }
 
@@ -193,52 +126,9 @@ export async function POST(request: NextRequest) {
       requestBody: { values },
     });
 
-    // #region agent log
-    fetch("http://127.0.0.1:7307/ingest/4a970e26-d6d1-4b12-95b0-597a4f8c439c", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Debug-Session-Id": "80fc19",
-      },
-      body: JSON.stringify({
-        sessionId: "80fc19",
-        location: "test-drive/route.ts:append-ok",
-        message: "Google Sheets append succeeded",
-        data: {
-          hypothesisId: "H4",
-          hasSpreadsheetId: Boolean(spreadsheetId),
-          spreadsheetIdLen: spreadsheetId.length,
-          sheetName,
-        },
-        timestamp: Date.now(),
-        runId: "append-ok",
-      }),
-    }).catch(() => {});
-    // #endregion
-
     console.log("POST /api/test-drive - 200");
     return legacyResponse(true, "Thank you. Your test drive request has been received.");
   } catch (error) {
-    // #region agent log
-    fetch("http://127.0.0.1:7307/ingest/4a970e26-d6d1-4b12-95b0-597a4f8c439c", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Debug-Session-Id": "80fc19",
-      },
-      body: JSON.stringify({
-        sessionId: "80fc19",
-        location: "test-drive/route.ts:append-catch",
-        message: "Google Sheets append failed",
-        data: {
-          hypothesisId: "H4",
-          error: error instanceof Error ? error.message : String(error),
-        },
-        timestamp: Date.now(),
-        runId: "append-failed",
-      }),
-    }).catch(() => {});
-    // #endregion
     console.error("POST /api/test-drive - error", error);
     return legacyResponse(
       false,
