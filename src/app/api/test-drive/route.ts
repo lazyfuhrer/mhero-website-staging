@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { google } from "googleapis";
 
-/** Row order: Timestamp, Name, Surname, Location, City, Country, Email, Phone, Message, Locale */
+/** Row order: Timestamp, Name, Surname, Location, City, Model, Email, Phone, Message, Locale */
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const ALLOWED_MODELS = new Set(["MHERO I", "MHERO II"]);
 
 function legacyResponse(success: boolean, message: string) {
   // `mhero_form_submit` expects `$.post` success payload to be a *string* and then runs `$.parseJSON`.
@@ -40,7 +41,7 @@ export async function POST(request: NextRequest) {
     const surname = String(formData.get("surname") ?? "").trim();
     const location = String(formData.get("location") ?? "").trim();
     const city = String(formData.get("city") ?? "").trim();
-    const country = String(formData.get("country") ?? "").trim();
+    const model = String(formData.get("model") ?? "").trim();
     const email = String(formData.get("email") ?? "").trim();
     const phone = String(formData.get("phone") ?? "").trim();
     const message = String(formData.get("message") ?? "").trim();
@@ -50,8 +51,11 @@ export async function POST(request: NextRequest) {
     const privacyOk =
       privacy === "on" || privacy === "true" || privacy === "1";
 
-    if (!name || !surname || !location || !city || !country || !email || !phone) {
+    if (!name || !surname || !location || !city || !model || !email || !phone) {
       return legacyResponse(false, "Please fill in all required fields.");
+    }
+    if (!ALLOWED_MODELS.has(model)) {
+      return legacyResponse(false, "Please choose a valid MHERO model.");
     }
     if (!privacyOk) {
       return legacyResponse(false, "You must accept the Privacy Policy.");
@@ -110,7 +114,7 @@ export async function POST(request: NextRequest) {
         surname,
         location,
         city,
-        country,
+        model,
         email,
         phone,
         message,

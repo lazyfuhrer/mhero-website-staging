@@ -235,9 +235,7 @@ function isName(e) {
   );
 }
 function isPhone(e) {
-  return /^(?:\+971|00971|0|971)?(?:02|03|04|06|07|09|50|51|52|54|55|56|58|2|3|4|6|7|9)\d{7}$/.test(
-    e
-  );
+  return /^(?:\+966|00966|966)?0?5[0-9]{8}$/.test(e);
 }
 function _isPhone(e) {
   return /^[+]?[\s./0-9]*[(]?[0-9]{1,4}[)]?[-\s./0-9]*$/g.test(e);
@@ -278,7 +276,7 @@ function mhao_validate(e) {
       : "phone" == i
       ? isPhone(n)
         ? (e.parent().removeClass("error"), e.get(0).setCustomValidity(""))
-        : (e.get(0).setCustomValidity("A valid UAE phone number required"),
+        : (e.get(0).setCustomValidity("A valid KSA phone number is required"),
           e.parent().addClass("error focused"),
           (t = !0))
       : "password" == i
