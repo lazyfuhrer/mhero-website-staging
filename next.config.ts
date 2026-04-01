@@ -14,7 +14,19 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
 
-      // 🔥 Enforce clean URLs (remove .html)
+      // ✅ Offers → Home (handles both /offers and /offers.html)
+      {
+        source: "/en/offers:ext(.html)?",
+        destination: "/en/home",
+        permanent: true,
+      },
+      {
+        source: "/ar/offers:ext(.html)?",
+        destination: "/ar/home",
+        permanent: true,
+      },
+
+      // ✅ Remove .html globally
       {
         source: "/:lang/:path*.html",
         destination: "/:lang/:path*",
@@ -35,22 +47,21 @@ const nextConfig: NextConfig = {
         destination: "/ar.html",
       },
 
-      // ✅ Special aliases (MUST be before generic)
+      // ✅ Specific routes (before generic)
       {
         source: "/:lang/contact-us",
         destination: "/:lang/contact.html",
       },
       {
-        source: "/:lang/user-consent-policy",
-        destination: "/:lang/user-consent-policy.html",
-      },
-      // Thank-you after contact form (URL is /{lang}/contact-us/thankyou; file is /{lang}/thankyou.html)
-      {
         source: "/:lang/contact-us/thankyou",
         destination: "/:lang/thankyou.html",
       },
+      {
+        source: "/:lang/user-consent-policy",
+        destination: "/:lang/user-consent-policy.html",
+      },
 
-      // 🔥 Nested routes (any depth)
+      // ✅ Catch-all (must be last)
       {
         source: "/:lang/:path*",
         destination: "/:lang/:path*.html",
