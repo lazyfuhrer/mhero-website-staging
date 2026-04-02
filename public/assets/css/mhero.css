@@ -3216,12 +3216,11 @@ p {
   padding: 40px 5vw;
 }
 .footer-app-links-wrap {
-  grid-column-gap: 1vw;
-  grid-row-gap: 1vw;
-  flex-flow: row;
-  justify-content: flex-start;
+  display: grid;
+  grid-template-columns: repeat(3, auto); /* 3 per row */
+  gap: 1vw;
+  justify-content: start;
   align-items: center;
-  display: flex;
 }
 .social-media-wrap {
   width: 40px;
