@@ -3222,6 +3222,9 @@ p {
   justify-content: start;
   align-items: center;
 }
+#whatsapp-chat {
+  display: none;
+}
 .social-media-wrap {
   width: 40px;
   height: 40px;
