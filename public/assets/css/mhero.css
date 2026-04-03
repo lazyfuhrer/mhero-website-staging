@@ -3225,6 +3225,9 @@ p {
 #whatsapp-chat {
   display: none;
 }
+a[href*="offers.html"] {
+  display: none !important;
+}
 .social-media-wrap {
   width: 40px;
   height: 40px;
