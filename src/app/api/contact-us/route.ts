@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { google } from "googleapis";
 
 /** Row order in the shared sheet:
- * Timestamp, Name, Surname, Location, City, Country, Email, Phone, Message, Locale
+ * Timestamp, Name, Surname, Company, City, Country, Email, Phone, Message, Locale
  *
- * For contact/support forms, Location/City/Country are intentionally left blank.
+ * City and Country are left blank for contact/support forms.
  */
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -118,20 +118,18 @@ export async function POST(request: NextRequest) {
     const sheetName = sheetTabForContactOrSupport(locale, mheroFormType);
 
     const timestamp = new Date().toISOString();
-    const messageWithCompany =
-      company.length > 0 ? `${message}\nCompany: ${company}` : message;
 
     const values = [
       [
         timestamp,
         name,
         surname,
-        "", // Location
+        company,
         "", // City
         "", // Country
         email,
         phone,
-        messageWithCompany,
+        message,
         locale,
       ],
     ];
