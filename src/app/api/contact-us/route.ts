@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { google } from "googleapis";
 
-/** Row order in the shared sheet:
- * Timestamp, Name, Surname, Company, City, Country, Email, Phone, Message, Locale
- *
- * City and Country are left blank for contact/support forms.
+/** Row order appended to columns A–H:
+ * Timestamp, Name, Surname, Company, Email, Phone, Message, Locale
  */
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -125,8 +123,6 @@ export async function POST(request: NextRequest) {
         name,
         surname,
         company,
-        "", // City
-        "", // Country
         email,
         phone,
         message,
@@ -134,9 +130,12 @@ export async function POST(request: NextRequest) {
       ],
     ];
 
+    // Explicit A:H forces a full-width row from column A; a bare sheet name can mis-detect table width and shift appends.
+    const appendRange = `'${sheetName.replace(/'/g, "''")}'!A:H`;
+
     await sheets.spreadsheets.values.append({
       spreadsheetId,
-      range: sheetName,
+      range: appendRange,
       valueInputOption: "USER_ENTERED",
       insertDataOption: "INSERT_ROWS",
       requestBody: { values },
