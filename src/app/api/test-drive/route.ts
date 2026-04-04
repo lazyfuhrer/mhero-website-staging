@@ -75,10 +75,10 @@ export async function POST(request: NextRequest) {
     }
 
     const credentials = process.env.GOOGLE_SERVICE_ACCOUNT_CREDENTIALS;
-    const spreadsheetId = process.env.MHERO_TEST_DRIVE_SHEET_ID;
+    const spreadsheetId = process.env.GOOGLE_SHEET_ID;
 
     if (!credentials || !spreadsheetId) {
-      console.error("POST /api/test-drive - missing GOOGLE_SERVICE_ACCOUNT_CREDENTIALS or MHERO_TEST_DRIVE_SHEET_ID");
+      console.error("POST /api/test-drive - missing GOOGLE_SERVICE_ACCOUNT_CREDENTIALS or GOOGLE_SHEET_ID");
       return legacyResponse(false, "Server configuration error. Please try again later.");
     }
 
@@ -96,15 +96,7 @@ export async function POST(request: NextRequest) {
 
     const sheets = google.sheets({ version: "v4", auth });
 
-    let sheetName = "Sheet1";
-    try {
-      const spreadsheet = await sheets.spreadsheets.get({ spreadsheetId });
-      if (spreadsheet.data.sheets && spreadsheet.data.sheets.length > 0) {
-        sheetName = spreadsheet.data.sheets[0].properties?.title || "Sheet1";
-      }
-    } catch {
-      // use default
-    }
+    const sheetName = locale === "ar" ? "test-drive-ar" : "test-drive-en";
 
     const timestamp = new Date().toISOString();
     const values = [

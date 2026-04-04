@@ -8,6 +8,16 @@ import { google } from "googleapis";
  */
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+/** Tab names inside spreadsheet GOOGLE_SHEET_ID */
+function sheetTabForContactOrSupport(locale: string, rawFormType: string): string {
+  const isAr = locale === "ar";
+  const formType = rawFormType === "support" ? "support" : "contact";
+  if (formType === "support") {
+    return isAr ? "support-ar" : "support-en";
+  }
+  return isAr ? "contact-us-ar" : "contact-us-en";
+}
+
 function legacyResponse(success: boolean, message: string) {
   // `mhero_form_submit` expects `$.post` success payload to be a *string* and then runs `$.parseJSON`.
   // Returning `NextResponse.json` can be parsed by jQuery automatically, which makes `$.parseJSON` crash with
@@ -50,6 +60,7 @@ export async function POST(request: NextRequest) {
     const phone = String(formData.get("phone") ?? "").trim();
     const message = String(formData.get("message") ?? "").trim();
     const locale = String(formData.get("locale") ?? "").trim() || "unknown";
+    const mheroFormType = String(formData.get("mhero_form_type") ?? "").trim();
 
     const privacyContact = formData.get("Privacy-Policy");
     const privacySupport = formData.get("privacy-Policy");
@@ -82,7 +93,7 @@ export async function POST(request: NextRequest) {
     }
 
     const credentials = process.env.GOOGLE_SERVICE_ACCOUNT_CREDENTIALS;
-    const spreadsheetId = process.env.MHERO_TEST_DRIVE_SHEET_ID;
+    const spreadsheetId = process.env.GOOGLE_SHEET_ID;
 
     if (!credentials || !spreadsheetId) {
       return legacyResponse(
@@ -104,15 +115,7 @@ export async function POST(request: NextRequest) {
 
     const sheets = google.sheets({ version: "v4", auth });
 
-    let sheetName = "Sheet1";
-    try {
-      const spreadsheet = await sheets.spreadsheets.get({ spreadsheetId });
-      if (spreadsheet.data.sheets && spreadsheet.data.sheets.length > 0) {
-        sheetName = spreadsheet.data.sheets[0].properties?.title || "Sheet1";
-      }
-    } catch {
-      // use default
-    }
+    const sheetName = sheetTabForContactOrSupport(locale, mheroFormType);
 
     const timestamp = new Date().toISOString();
     const messageWithCompany =
