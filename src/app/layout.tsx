@@ -9,8 +9,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Mhero - Coming Soon",
-  description: "Mhero website coming soon",
+  title: "MHERO Saudi Arabia | Premium Hybrid Off-Road SUV by Dongfeng",
+  description:
+    "Discover MHERO, the luxury hybrid off-road SUV by Dongfeng. 800 HP, military heritage design, advanced 4WD. Available in Saudi Arabia through Al Ghassan Mobility.",
 };
 
 export default function RootLayout({

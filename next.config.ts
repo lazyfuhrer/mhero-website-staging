@@ -14,18 +14,6 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
 
-      // ✅ Offers → Home (handles both /offers and /offers.html)
-      {
-        source: "/en/offers:ext(.html)?",
-        destination: "/en/home",
-        permanent: true,
-      },
-      {
-        source: "/ar/offers:ext(.html)?",
-        destination: "/ar/home",
-        permanent: true,
-      },
-
       // ✅ Remove .html globally
       {
         source: "/:lang/:path*.html",
